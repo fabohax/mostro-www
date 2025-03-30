@@ -8,7 +8,7 @@ declare global {
   interface Window {
     nostr?: {
       getPublicKey: () => Promise<string>;
-      signEvent?: (event: { kind: number; content: string; tags: any[]; created_at: number; pubkey: string }) => Promise<{ kind: number; content: string; tags: any[]; created_at: number; pubkey: string; sig: string }>;
+      signEvent?: (event: { kind: number; content: string; tags: { key: string; value: string }[]; created_at: number; pubkey: string }) => Promise<{ kind: number; content: string; tags: { key: string; value: string }[]; created_at: number; pubkey: string; sig: string }>;
     };
   }
 }

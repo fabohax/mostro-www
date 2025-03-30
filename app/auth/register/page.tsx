@@ -53,7 +53,7 @@ export default function Register() {
         setError('You must generate and save your keys first.')
         return
       }
-      router.push(`/u/${npub}`)
+      router.push(`/`)
     } catch (err) {
       console.error(err)
       setError('Failed to login with provided mnemonic.')
