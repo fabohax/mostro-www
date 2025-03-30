@@ -1,36 +1,124 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mostro Web Client
 
-## Getting Started
+Web client for the [Mostro](https://github.com/MostroP2P/mostro) P2P system, built with Next.js.  
+This client provides a browser interface for peer-to-peer Bitcoin trading over the Lightning Network using Nostr.
 
-First, run the development server:
+## Overview
+
+- Built with [Next.js](https://nextjs.org/)
+- Enables decentralized trading via the Lightning Network
+- Uses Nostr for communication and identity (NIP-07 and mnemonic-based)
+- Communicates with a running Mostro daemon
+
+## Requirements
+
+### Node.js and npm
+
+- Node.js: `v20.15.1` (recommended)
+- npm: `10.7.0` (recommended)
+
+### Mostro Daemon
+
+This client requires a running instance of the [Mostro daemon](https://github.com/MostroP2P/mostro).  
+Follow the instructions in the [Mostro README](https://github.com/MostroP2P/mostro#requirements) to set it up.
+
+## Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/fabohax/mostro-www.git
+cd mostro-www
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure Environment Variables
+
+Copy the sample config file and edit it:
+
+```bash
+cp .env-sample .env
+```
+
+Set the following variables:
+
+- `RELAYS`: A comma-separated list of Nostr relay URLs.
+
+```env
+RELAYS=wss://relay.mostro.network,wss://relay.nostr.net
+```
+
+- `MOSTRO_PUB_KEY`: The public key (`npub`) of the Mostro daemon you're connecting to.
+
+```env
+MOSTRO_PUB_KEY=npub1examplekeyhere...
+```
+
+Load environment variables:
+
+```bash
+source .env
+```
+
+Optional: You can run your own relay using Docker. See [this section](https://github.com/MostroP2P/mostro#option-1-run-mostro-with-a-private-dockerized-relay) in the Mostro repository.
+
+### 4. Start the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app will be available at `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Order creation: Buy and Sell
+- Order listing and filtering
+- Market and fixed price modes
+- Taker and Maker flows
+- Multiple relay support
+- NIP-07 and mnemonic-based key management
+- Message decoding and peer chat
+- Dispute handling
+- Persistent event loading
 
-## Learn More
+### In Progress
 
-To learn more about Next.js, take a look at the following resources:
+- NIP-59 support (payment method metadata)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+These are common Next.js scripts available:
 
-## Deploy on Vercel
+```bash
+# Run in development mode
+npm run dev
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Create production build
+npm run build
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Start production server
+npm run start
+```
+
+## Contributing
+
+Contributions are welcome. To contribute:
+
+1. Fork the repository
+2. Create a new branch: `git checkout -b feature/my-feature`
+3. Commit your changes: `git commit -am 'Add new feature'`
+4. Push to your fork: `git push origin feature/my-feature`
+5. Create a Pull Request describing your changes
+
+Please make sure your code follows the existing style and passes linting before submitting a PR.
+
+## License
+
+This project is licensed under the MIT License. See the `LICENSE` file for full details.
+
