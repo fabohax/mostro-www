@@ -9,6 +9,43 @@ export default function UserProfile() {
   const router = useRouter()
   const params = useParams()
   const id = Array.isArray(params?.id) ? params.id[0] : params?.id
+  interface UserOrder {
+    id: string
+    type: string
+    amount: number
+    [key: string]: string | number | boolean | null | undefined // Adjust this to match the exact structure of your order data
+  }
+
+  const [userOrders, setUserOrders] = useState<UserOrder[]>([])
+  const [relayStatus, setRelayStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
+
+  useEffect(() => {
+    const socket = new WebSocket('wss://relay.mostro.network')
+  
+    socket.onopen = () => {
+      setRelayStatus('connected')
+  
+      // Enviamos un REQ simple a cualquier kind para testear respuesta
+      const testSub = [
+        'test-sub',
+        {
+          kinds: [1] // kind 1 = note (lo más común)
+        }
+      ]
+      socket.send(JSON.stringify(['REQ', ...testSub]))
+    }
+    socket.onmessage = (msg) => {
+      const data = JSON.parse(msg.data)
+      if (data[0] === 'EVENT') {
+        const event = data[2]
+        console.log('Received event:', event)
+      }
+    }
+  
+    socket.onerror = () => setRelayStatus('error')
+  
+    return () => socket.close()
+  }, [])
 
   const [isReady, setIsReady] = useState(false)
   const [isCurrentUser, setIsCurrentUser] = useState(false)
@@ -45,6 +82,38 @@ export default function UserProfile() {
 
     setIsReady(true)
   }, [id])
+
+  useEffect(() => {
+    if (!isCurrentUser || !localData.pubkey) return
+  
+    const socket = new WebSocket('wss://relay.mostro.network')
+  
+    socket.onopen = () => {
+      const filter = {
+        kinds: [23195], // Kind de órdenes según Mostro
+        authors: [localData.pubkey] // clave pública hex
+      }
+      socket.send(JSON.stringify(['REQ', 'user-orders-sub', filter]))
+    }
+  
+    socket.onmessage = (msg) => {
+      try {
+        const data = JSON.parse(msg.data)
+        if (data[0] === 'EVENT') {
+          const event = data[2]
+          const content = JSON.parse(event.content)
+          setUserOrders(prev => [...prev, content])
+        }
+      } catch (e) {
+        console.error('Error parsing order from relay:', e)
+      }
+    }
+  
+    return () => {
+      socket.close()
+    }
+  }, [isCurrentUser, localData.pubkey])
+  
 
   const handleLogout = () => {
     // Eliminar todas las claves relacionadas
@@ -91,6 +160,21 @@ export default function UserProfile() {
               <p className="text-gray-400 text-sm">Mnemonic Phrase:</p>
               <p className="break-words text-white text-sm">{localData.mnemonic}</p>
             </div>
+            <div className="bg-neutral-900 border border-neutral-700 p-4 rounded text-sm mt-8">
+              <p className="text-lime-400">Relay Status: {relayStatus}</p>
+            </div>
+
+            {isCurrentUser && userOrders.length > 0 && (
+              <div className="mt-12 space-y-4">
+                <h2 className="text-xl font-bold">My Orders from Mostro Relay</h2>
+                {userOrders.map((order, i) => (
+                  <div key={i} className="bg-neutral-900 border border-neutral-700 p-4 rounded text-sm">
+                    <pre className="text-white whitespace-pre-wrap break-words">{JSON.stringify(order, null, 2)}</pre>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <div className="mt-6 flex justify-center">
               <button
                 onClick={handleLogout}
