@@ -25,27 +25,36 @@ export default function OrderDetailsPage() {
     if (!id) return;
 
     console.log('Listening for order ID:', id);
+    const RELAY = process.env.NEXT_PUBLIC_RELAY_URL;
+    console.log('Relay URL:', RELAY);
 
-    const socket = new WebSocket('wss://relay.mostro.network');
+    if (!RELAY) {
+      console.error('Relay URL is not defined');
+      return;
+    }
+
+    const socket = new WebSocket(RELAY);
 
     socket.onopen = () => {
       setRelayConnected(true);
       console.log('Connected to relay, sending subscription for order');
-      socket.send(
-        JSON.stringify([
-          'REQ',
-          'order-detail',
-          {
-            kinds: [38383],
-            '#d': [id],
-          },
-        ])
-      );
+
+      const req = [
+        'REQ',
+        'order-detail',
+        {
+          kinds: [38383],
+          '#d': [id]
+        }
+      ];
+
+      socket.send(JSON.stringify(req));
     };
 
     socket.onmessage = (msg) => {
       const data = JSON.parse(msg.data);
       console.log('Received data from relay:', data);
+
       if (data[0] === 'EVENT' && data[2]?.kind === 38383) {
         setOrder(data[2]);
         socket.close();
@@ -64,7 +73,10 @@ export default function OrderDetailsPage() {
     <div className="min-h-screen bg-black text-white font-mono">
       <Header />
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6 break-words">Order <br/><span className='text-sm'>#{id}</span></h1>
+        <h1 className="text-2xl font-bold mb-6 break-words">
+          Order <br />
+          <span className="text-sm">#{id}</span>
+        </h1>
 
         {!relayConnected && <p className="text-red-500">Connecting to relay...</p>}
 

@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react'
 import { bytesToHex, hexToBytes } from '@noble/hashes/utils'
 import { signAsync } from '@noble/secp256k1'
@@ -34,30 +36,80 @@ export function useMostroOrder() {
     }
 
     const now = Math.floor(Date.now() / 1000)
-    const content = JSON.stringify(order)
-    const tags: string[][] = [['d', crypto.randomUUID()]]
+    const orderId = crypto.randomUUID()
+    const tags: string[][] = [['d', orderId]]
 
-    const serialized = [0, pubkey, now, 23195, tags, content]
-    const encoded = JSON.stringify(serialized)
+    const rumorContent = [
+      {
+        order: {
+          version: 1,
+          action: 'new-order',
+          trade_index: 1,
+          payload: {
+            order: {
+              kind: order.type,
+              status: 'pending',
+              amount: 0,
+              fiat_code: order.fiat_code,
+              fiat_amount: order.amount,
+              payment_method: order.payment_method,
+              premium: order.premium,
+              created_at: now
+            }
+          }
+        }
+      }
+    ]
+
+    const encoded = JSON.stringify(rumorContent)
     const hash = sha256(new TextEncoder().encode(encoded))
-    const id = bytesToHex(hash)
-
-    const signatureWithRecovery = await signAsync(hash, hexToBytes(privkey))
-    const r = signatureWithRecovery.r.toString(16).padStart(64, '0')
-    const s = signatureWithRecovery.s.toString(16).padStart(64, '0')
+    const sigRaw = await signAsync(hash, hexToBytes(privkey))
+    const r = sigRaw.r.toString(16).padStart(64, '0')
+    const s = sigRaw.s.toString(16).padStart(64, '0')
     const sig = bytesToHex(new Uint8Array([...hexToBytes(r), ...hexToBytes(s)]))
 
+    rumorContent.push({
+      order: {
+        version: 1,
+        action: 'signature',
+        trade_index: rumorContent.length,
+        payload: {
+          order: {
+            kind: 'signature',
+            status: 'signed',
+            amount: 0,
+            fiat_code: '',
+            fiat_amount: 0,
+            payment_method: '',
+            premium: 0,
+            created_at: now
+          }
+        }
+      }
+    })
+
+    const content = JSON.stringify(rumorContent)
+    const serialized = [0, pubkey, now, 38383, tags, content]
+    const eventHash = sha256(new TextEncoder().encode(JSON.stringify(serialized)))
+    const id = bytesToHex(eventHash)
+
     const fullEvent: NostrEvent = {
-      kind: 23195,
+      kind: 38383,
       created_at: now,
       tags,
       content,
       pubkey,
       id,
-      sig,
+      sig
     }
 
-    const socket = new WebSocket('wss://relay.mostro.network')
+    const RELAY = process.env.NEXT_PUBLIC_RELAY_URL
+    if (!RELAY) {
+      setStatus('Relay URL is not defined')
+      return null
+    }
+
+    const socket = new WebSocket(RELAY)
 
     socket.onopen = () => {
       socket.send(JSON.stringify(['EVENT', fullEvent]))
@@ -69,7 +121,7 @@ export function useMostroOrder() {
       setStatus('Relay connection error')
     }
 
-    return id
+    return orderId
   }
 
   return { sendOrder, status }

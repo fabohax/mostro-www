@@ -20,7 +20,13 @@ export default function UserProfile() {
   const [relayStatus, setRelayStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
 
   useEffect(() => {
-    const socket = new WebSocket('wss://relay.mostro.network')
+    const RELAY = process.env.NEXT_PUBLIC_RELAY_URL 
+    if (!RELAY) {
+      console.error('Relay URL is not defined')
+      setRelayStatus('error')
+      return
+    }
+    const socket = new WebSocket(RELAY)
   
     socket.onopen = () => {
       setRelayStatus('connected')
@@ -90,7 +96,7 @@ export default function UserProfile() {
   
     socket.onopen = () => {
       const filter = {
-        kinds: [23195], // Kind de órdenes según Mostro
+        kinds: [38383], // Kind de órdenes según Mostro
         authors: [localData.pubkey] // clave pública hex
       }
       socket.send(JSON.stringify(['REQ', 'user-orders-sub', filter]))

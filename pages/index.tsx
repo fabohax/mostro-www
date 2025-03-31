@@ -102,8 +102,8 @@ export default function Home() {
               placeholder="100 000"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="text-xl col-span-3 bg-transparent border-none outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:ring-0"
-            />
+              className="text-4xl col-span-3 bg-transparent border-none outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:ring-0"
+              />
             <div className="flex items-center justify-center text-xl">
               SAT
             </div>
@@ -114,7 +114,7 @@ export default function Home() {
               <SelectTrigger className="bg-transparent text-white px-0 border-none outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:ring-0">
                 <SelectValue placeholder="Price" />
               </SelectTrigger>
-              <SelectContent className="bg-neutral-900 border-neutral-700">
+              <SelectContent className="bg-neutral-900 border-neutral-700 text-white">
                 <SelectItem value="market">MARKET PRICE</SelectItem>
                 <SelectItem value="custom">CUSTOM PRICE</SelectItem>
               </SelectContent>
@@ -146,7 +146,7 @@ export default function Home() {
             <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 text-white">
               <SelectValue placeholder="▼ PAYMENT METHOD" />
             </SelectTrigger>
-            <SelectContent className="bg-neutral-900 border-neutral-700">
+            <SelectContent className="bg-neutral-900 border-neutral-700 text-white">
               {paymentMethodsData.map((method) => (
                 <SelectItem key={method} value={method}>{method}</SelectItem>
               ))}

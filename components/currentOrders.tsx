@@ -16,20 +16,27 @@ interface MostroOrderEvent {
 
 export default function CurrentOrders() {
   const [orders, setOrders] = useState<MostroOrderEvent[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [relayStatus, setRelayStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
+  const [loading] = useState(true);
 
   useEffect(() => {
-    const socket = new WebSocket('wss://relay.mostro.network');
+    const RELAY = process.env.NEXT_PUBLIC_RELAY_URL 
+    if (!RELAY) {
+      console.error('Relay URL is not defined')
+      setRelayStatus('error')
+      return
+    }
+    const socket = new WebSocket(RELAY);
 
     socket.onopen = () => {
       console.log('[Relay] Connected ✅');
 
       const filter = {
-        kinds: [23196],
+        kinds: [38383], // Kind used by Mostro to publish new orders
         limit: 20
       };
 
-      const req = ['REQ', 'current-orders', filter];
+      const req = ['REQ', 'mostro-orders', filter];
       socket.send(JSON.stringify(req));
       console.log('[Relay] Request sent:', req);
     };
@@ -37,22 +44,19 @@ export default function CurrentOrders() {
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        if (data[0] === 'EVENT' && data[2]?.kind === 23196) {
-          console.log('[Relay] Event received:', data[2]);
+        if (data[0] === 'EVENT' && data[2]?.kind === 23195) {
+          console.log('[Relay] Mostro Order:', data[2]);
           setOrders((prev) => [...prev, data[2]]);
-        } else if (data[0] === 'EOSE') {
-          setLoading(false);
-          console.log('[Relay] End of stored events');
         } else {
-          console.log('[Relay] Message skipped:', data);
+          console.log('[Relay] Skipped:', data);
         }
       } catch (error) {
-        console.error('[Relay] Message parsing error:', error);
+        console.error('[Relay] Error parsing:', error);
       }
     };
 
     socket.onerror = (err) => {
-      console.error('[Relay] Error ❌', err);
+      console.error('[Relay] Connection error ❌', err);
     };
 
     socket.onclose = () => {
@@ -64,20 +68,16 @@ export default function CurrentOrders() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto text-white space-y-4">
-      <h2 className="text-xl font-bold mb-4">Open Orders ({orders.length})</h2>
+      <h2 className="text-xl font-bold mb-4">Live Mostro Orders</h2>
 
       {loading && <Skeleton className="h-24 w-full bg-neutral-800" />}
 
-      {orders.length === 0 && !loading && (
-        <p className="text-gray-400 text-sm">No open orders found.</p>
-      )}
-
-      {orders.map((order) => {
+      {orders.map(order => {
         let parsed;
         try {
           parsed = JSON.parse(order.content);
         } catch {
-          console.warn('Invalid JSON in order:', order);
+          console.warn('Invalid order content:', order);
           return null;
         }
 
@@ -88,15 +88,18 @@ export default function CurrentOrders() {
               <p><strong>Amount:</strong> {parsed.amount}</p>
               <p><strong>Fiat:</strong> {parsed.fiat_code}</p>
               <p><strong>Method:</strong> {parsed.payment_method}</p>
-              <div className="mt-2">
+              <p className="mt-2">
                 <a
                   href={`/order/${order.id}`}
                   className="text-lime-400 underline text-sm"
                 >
                   View Order
                 </a>
-              </div>
+              </p>
             </CardContent>
+            <div className="bg-neutral-900 border border-neutral-700 p-4 rounded text-sm mt-8">
+              <p className="text-lime-400">Relay Status: {relayStatus}</p>
+            </div>
           </Card>
         );
       })}
