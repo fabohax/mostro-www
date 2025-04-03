@@ -75,30 +75,32 @@ npm run dev
 
 The app will be available at `http://localhost:3000`
 
-### 🔁 Plan de Desarrollo
+### Development Roadmap
 
-#### [ ] **Consolidación del envío de órdenes**
-- Validar esquema Gift Wrap `kind: 38383` con firma y tag `["d", id]`.
-- Confirmar publicación y persistencia en relay (local y producción).
-- Usar `orderId` como identificador en URLs (`/order/[id]`).
+#### Order Flow
 
-#### [ ] **Página de detalle de orden**
-- Escuchar por `#d` y mostrar datos de orden en `/order/[id]`.
-- Mostrar JSON parseado + metadatos (`pubkey`, `created_at`, `sig`, etc).
+- [ ] **Integrate Gift Wrap support `kind: 38383`**
+  - Proper serialization and payload signing  
+  - Use `["d", uuid]` tag as unique identifier  
 
-#### [ ] **Listado global de órdenes**
-- Crear vista `/orders` con las últimas 20 órdenes `kind: 23196`.
-- Incluir botones de acción (ver / tomar) y diseño claro.
-- Agregar filtros rápidos (tipo, moneda, método).
+- [ ] **`/order/[id]` page**
+  - Listen for events using `#d` filter  
+  - Display parsed order data + metadata (`pubkey`, `sig`, `created_at`)  
+  - Show raw JSON for debugging  
 
-#### [ ] **Perfil con historial de órdenes**
-- En `/profile/[npub]`, listar órdenes emitidas por el usuario.
-- Mostrar estado y acceso a detalles de cada una.
+- [ ] **Global orders list `/orders`**
+  - Fetch the latest 20 orders (`kind: 23196`)  
+  - Filters: type (Buy/Sell), currency, payment method  
+  - Quick actions: view or take order  
 
-#### [ ] **Validación, feedback y UX**
-- Validaciones de formulario antes de enviar.
-- Loaders y toasts con estado de envío.
-- Mejora visual para feedback de éxito/error.
+- [ ] **User order history `/u/[npub]`**
+  - List orders created by the current user  
+  - Access details and contextual interactions  
+
+- [ ] **UX improvements / validations**
+  - Validate form inputs before publishing  
+  - Add loaders, toasts, and clear messages  
+  - Fallback handling for network or signing errors  
 
 ### Features 
 
