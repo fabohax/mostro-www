@@ -75,36 +75,32 @@ npm run dev
 
 The app will be available at `http://localhost:3000`
 
-### Cronograma de Desarrollo
+### 🔁 Plan de Desarrollo
 
-#### Flujo de Órdenes
+#### [ ] **Consolidación del envío de órdenes**
+- Validar esquema Gift Wrap `kind: 38383` con firma y tag `["d", id]`.
+- Confirmar publicación y persistencia en relay (local y producción).
+- Usar `orderId` como identificador en URLs (`/order/[id]`).
 
-- [ ] **Integrar soporte Gift Wrap `kind: 38383`**
-  - Serialización correcta y firma del payload
-  - Tag `["d", uuid]` como identificador único
+#### [ ] **Página de detalle de orden**
+- Escuchar por `#d` y mostrar datos de orden en `/order/[id]`.
+- Mostrar JSON parseado + metadatos (`pubkey`, `created_at`, `sig`, etc).
 
-- [ ] **Página `/order/[id]`**
-  - Escucha por eventos con `#d`
-  - Mostrar datos de la orden parseados + metadata (`pubkey`, `sig`, `created_at`)
-  - Visualizar JSON crudo para debugging
+#### [ ] **Listado global de órdenes**
+- Crear vista `/orders` con las últimas 20 órdenes `kind: 23196`.
+- Incluir botones de acción (ver / tomar) y diseño claro.
+- Agregar filtros rápidos (tipo, moneda, método).
 
-- [ ] **Listado general `/orders`**
-  - Fetch de las últimas 20 órdenes (`kind: 23196`)
-  - Filtros: tipo (Buy/Sell), moneda, método de pago
-  - Acciones rápidas: ver o tomar orden
+#### [ ] **Perfil con historial de órdenes**
+- En `/profile/[npub]`, listar órdenes emitidas por el usuario.
+- Mostrar estado y acceso a detalles de cada una.
 
-- [ ] **Historial en perfil `/u/[npub]`**
-  - Listado de órdenes creadas por el usuario
-  - Acceso a detalles e interacción contextual
+#### [ ] **Validación, feedback y UX**
+- Validaciones de formulario antes de enviar.
+- Loaders y toasts con estado de envío.
+- Mejora visual para feedback de éxito/error.
 
-- [ ] **Mejoras UX / validaciones**
-  - Validaciones de formulario antes de publicar
-  - Loaders, toasts y mensajes claros
-  - Fallback en caso de errores de red o firma
-
----
-
-### ✅ Features 
+### Features 
 
 - Order creation: Buy and Sell  
 - Market and fixed price modes  
