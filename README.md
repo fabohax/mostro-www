@@ -75,19 +75,49 @@ npm run dev
 
 The app will be available at `http://localhost:3000`
 
-## Features
+### Cronograma de Desarrollo
 
-- Order creation: Buy and Sell
-- Order listing and filtering
-- Market and fixed price modes
-- Taker and Maker flows
-- Multiple relay support
-- NIP-07 and mnemonic-based key management
-- Message decoding and peer chat
-- Dispute handling
-- Persistent event loading
+#### Flujo de Órdenes
 
-### In Progress
+- [ ] **Integrar soporte Gift Wrap `kind: 38383`**
+  - Serialización correcta y firma del payload
+  - Tag `["d", uuid]` como identificador único
+
+- [ ] **Página `/order/[id]`**
+  - Escucha por eventos con `#d`
+  - Mostrar datos de la orden parseados + metadata (`pubkey`, `sig`, `created_at`)
+  - Visualizar JSON crudo para debugging
+
+- [ ] **Listado general `/orders`**
+  - Fetch de las últimas 20 órdenes (`kind: 23196`)
+  - Filtros: tipo (Buy/Sell), moneda, método de pago
+  - Acciones rápidas: ver o tomar orden
+
+- [ ] **Historial en perfil `/u/[npub]`**
+  - Listado de órdenes creadas por el usuario
+  - Acceso a detalles e interacción contextual
+
+- [ ] **Mejoras UX / validaciones**
+  - Validaciones de formulario antes de publicar
+  - Loaders, toasts y mensajes claros
+  - Fallback en caso de errores de red o firma
+
+---
+
+### ✅ Features 
+
+- Order creation: Buy and Sell  
+- Market and fixed price modes  
+- Taker and Maker flows  
+- Multiple relay support  
+- NIP-07 and mnemonic-based key management  
+- Message decoding and peer chat  
+- Dispute handling  
+- Persistent event loading  
+
+---
+
+### 🚧 En Progreso
 
 - NIP-59 support (payment method metadata)
 

@@ -9,7 +9,7 @@ export default function Auth() {
     <div className="min-h-screen flex items-center justify-center bg-black text-white w-full p-0 font-mono">
       <div className="text-center space-y-4 w-full">
         <Link href="/auth/login">
-            <Button className="bg-lime-500 text-black cursor-pointer hover:bg-white lg:w-1/3 mb-2">
+            <Button className="bg-lime-500 text-black cursor-pointer hover:bg-white w-full lg:w-1/3 mb-2">
             Login 
             </Button>
         </Link>

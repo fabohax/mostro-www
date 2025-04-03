@@ -62,7 +62,7 @@ export default function Register() {
 
   return (
     <div>
-      <Button className="bg-lime-500 text-black hover:bg-white cursor-pointer lg:w-1/3" onClick={generateKey}>
+      <Button className="bg-lime-500 text-black hover:bg-white cursor-pointer w-full lg:w-1/3" onClick={generateKey}>
         Generate Key
       </Button>
 
