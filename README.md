@@ -39,23 +39,10 @@ npm install
 
 ### 3. Configure Environment Variables
 
-Copy the sample config file and edit it:
-
-```bash
-cp .env-sample .env
-```
-
 Set the following variables:
-
-- `NEXT_PUBLIC_RELAY_URL`: A comma-separated list of Nostr relay URLs.
 
 ```env
 NEXT_PUBLIC_RELAY_URL=wss://relay.mostro.network,wss://relay.nostr.net
-```
-
-- `NEXT_PUBLIC_MOSTRO_PUBKEY`: The public key (`npub`) of the Mostro daemon you're connecting to.
-
-```env
 NEXT_PUBLIC_MOSTRO_PUBKEY=npub19m9laul6k463czdacwx5ta4ap43nlf3lr0p99mqugnz8mdz7wtvskkm5wg
 ```
 
