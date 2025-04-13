@@ -103,21 +103,6 @@ The app will be available at `http://localhost:3000`
 - Order history and details and filtering  
 - Order cancellation and dispute resolution
 
-## Scripts
-
-These are common Next.js scripts available:
-
-```bash
-# Run in development mode
-npm run dev
-
-# Create production build
-npm run build
-
-# Start production server
-npm run start
-```
-
 ## Contributing
 
 Contributions are welcome. To contribute:
