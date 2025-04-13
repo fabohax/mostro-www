@@ -71,7 +71,7 @@ export default function Register() {
           <div className="bg-[#111] text-white border border-gray-500 p-4 rounded-xl space-y-2 mt-8 py-8 lg:w-1/3 mx-auto">
             <p className="font-semibold">Your Mnemonic is:</p>
             <p className="break-words text-xl p-8 w-full text-center border border-gray-500 rounded-xl">{mnemonic}</p>
-            <Button onClick={handleCopy} variant="outline" className="w-full text-black border-black cursor-pointer">
+            <Button onClick={handleCopy} variant="outline" className="w-full bg-white text-black border-white cursor-pointer">
               {copied ? '✓ Copied' : 'Copy Phrase'}
             </Button>
             <p className="text-xs italic text-gray-500">This phrase gives full access. Back it up safely.</p>

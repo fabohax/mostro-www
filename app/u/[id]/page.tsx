@@ -140,7 +140,7 @@ export default function UserProfile() {
   }
 
   return (
-    <div className="min-w-screen min-h-screen bg-[#101010] text-white font-mono max-w-2xl mx-auto space-y-6">
+    <div className="min-w-screen min-h-screen bg-[#101010] text-white font-mono max-w-2xl mx-auto space-y-6 py-20">
       <Header />
       <div className="lg:w-1/3 mx-auto">
         <h1 className="text-3xl font-bold mb-8">Profile</h1>
