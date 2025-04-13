@@ -47,16 +47,16 @@ cp .env-sample .env
 
 Set the following variables:
 
-- `RELAYS`: A comma-separated list of Nostr relay URLs.
+- `NEXT_PUBLIC_RELAY_URL`: A comma-separated list of Nostr relay URLs.
 
 ```env
-RELAYS=wss://relay.mostro.network,wss://relay.nostr.net
+NEXT_PUBLIC_RELAY_URL=wss://relay.mostro.network,wss://relay.nostr.net
 ```
 
-- `MOSTRO_PUB_KEY`: The public key (`npub`) of the Mostro daemon you're connecting to.
+- `NEXT_PUBLIC_MOSTRO_PUBKEY`: The public key (`npub`) of the Mostro daemon you're connecting to.
 
 ```env
-MOSTRO_PUB_KEY=npub1examplekeyhere...
+NEXT_PUBLIC_MOSTRO_PUBKEY=npub19m9laul6k463czdacwx5ta4ap43nlf3lr0p99mqugnz8mdz7wtvskkm5wg
 ```
 
 Load environment variables:
