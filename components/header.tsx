@@ -16,14 +16,14 @@ export default function Header() {
   }, [])
 
   return (
-    <header className="flex justify-between items-center p-4 bg-transparent text-white">
+    <header className="fixed top-0 left-0 right-0 flex justify-between items-center p-4 bg-transparent text-white">
       {/* Logo */}
       <div className="flex items-center">
         <Link href="/">
           <Image
-            src="/MOSTRO-LOGO.png"
+            src="/mostro-iso.png"
             alt="Mostro Logo"
-            width={27}
+            width={91}
             height={27}
           />
         </Link>

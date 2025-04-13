@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Header from '@/components/header';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useMostroOrder, MostroOrderStatus } from '@/hooks/useMostroOrder';
+import { useMostroOrder, MostroOrderStatus, MostroOrderPreview, MostroRelayResponse} from '@/hooks/useMostroOrder'
 import { toast } from 'sonner';
 import currenciesData from '@/data/currencies.json';
 import paymentMethodsData from '@/data/payment_methods.json';
@@ -25,7 +25,7 @@ export default function Home() {
   const [customPrice, setCustomPrice] = useState('');
   const [amount, setAmount] = useState('');
 
-  const { sendOrder, status } = useMostroOrder();
+  const { sendOrder, status, latestOrder, relayResponse } = useMostroOrder()
 
   useEffect(() => {
     const npub = localStorage.getItem('nostr-npub');
@@ -80,17 +80,17 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#101010] text-white p-0 font-mono space-y-6">
+    <div className="h-full bg-[#101010] text-white p-0 font-mono space-y-6 py-20">
       <Header />
 
       <Card className="bg-neutral-900 border border-neutral-700 max-w-md mx-auto shadow-lg my-8">
         <CardContent className="px-6 space-y-4 py-6">
           <Tabs defaultValue="buy" value={selectedTab} onValueChange={setSelectedTab} className="w-full">
             <TabsList className="grid grid-cols-2 bg-neutral-800 w-full">
-              <TabsTrigger value="buy" className={selectedTab === 'buy' ? 'bg-white text-black' : 'text-white'}>
+              <TabsTrigger value="buy" className={selectedTab === 'buy' ? 'bg-[#fff] text-foreground cursor-pointer' : 'text-white cursor-pointer select-none'}>
                 BUY
               </TabsTrigger>
-              <TabsTrigger value="sell" className={selectedTab === 'sell' ? 'bg-white text-black' : 'text-white'}>
+              <TabsTrigger value="sell" className={selectedTab === 'sell' ? 'bg-white text-foreground cursor-pointer' : 'text-white cursor-pointer select-none'}>
                 SELL
               </TabsTrigger>
             </TabsList>
@@ -167,6 +167,8 @@ export default function Home() {
           )}
 
           <MostroOrderStatus status={status} />
+          <MostroOrderPreview order={latestOrder} />
+          <MostroRelayResponse response={relayResponse} />
         </CardContent>
         <div>
           <CurrentOrders />

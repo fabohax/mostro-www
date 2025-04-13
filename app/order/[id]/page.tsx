@@ -44,10 +44,11 @@ export default function OrderDetailsPage() {
         'order-detail',
         {
           kinds: [38383],
-          '#d': [id]
-        }
+          '#d': [id],
+        },
       ];
 
+      console.log('Sending subscription request with filters:', req[2]);
       socket.send(JSON.stringify(req));
     };
 
@@ -56,8 +57,13 @@ export default function OrderDetailsPage() {
       console.log('Received data from relay:', data);
 
       if (data[0] === 'EVENT' && data[2]?.kind === 38383) {
+        console.log('Matching event received:', data[2]);
         setOrder(data[2]);
         socket.close();
+      } else if (data[0] === 'EOSE') {
+        console.log('End of subscription event received');
+      } else {
+        console.warn('Unexpected message from relay:', data);
       }
     };
 
@@ -78,7 +84,13 @@ export default function OrderDetailsPage() {
           <span className="text-sm">#{id}</span>
         </h1>
 
-        {!relayConnected && <p className="text-red-500">Connecting to relay...</p>}
+        {!order && relayConnected && (
+          <p className="text-gray-400">No matching order found. Please try again later.</p>
+        )}
+
+        {!relayConnected && (
+          <p className="text-red-500">Connecting to relay...</p>
+        )}
 
         {order ? (
           <>
@@ -98,9 +110,7 @@ export default function OrderDetailsPage() {
               </pre>
             </div>
           </>
-        ) : (
-          <p className="text-gray-400">Waiting for order confirmation...</p>
-        )}
+        ) : null}
       </div>
     </div>
   );

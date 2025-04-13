@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import Image from 'next/image';
 
 interface MostroOrderEvent {
   id: string;
@@ -16,27 +16,32 @@ interface MostroOrderEvent {
 
 export default function CurrentOrders() {
   const [orders, setOrders] = useState<MostroOrderEvent[]>([]);
-  const [relayStatus, setRelayStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
-  const [loading] = useState(true);
+  const [relayStatus, setRelayStatus] = useState<'connecting' | 'connected' | 'error'>('connecting');
 
   useEffect(() => {
-    const RELAY = process.env.NEXT_PUBLIC_RELAY_URL 
+    const RELAY = process.env.NEXT_PUBLIC_RELAY_URL;
+
     if (!RELAY) {
-      console.error('Relay URL is not defined')
-      setRelayStatus('error')
-      return
+      console.error('Relay URL is not defined');
+      setRelayStatus('error');
+      return;
     }
+
     const socket = new WebSocket(RELAY);
 
     socket.onopen = () => {
       console.log('[Relay] Connected ✅');
+      setRelayStatus('connected');
 
-      const filter = {
-        kinds: [38383], // Kind used by Mostro to publish new orders
-        limit: 20
-      };
+      const req = [
+        'REQ',
+        'mostro-orders',
+        {
+          kinds: [38383],
+          limit: 20
+        }
+      ];
 
-      const req = ['REQ', 'mostro-orders', filter];
       socket.send(JSON.stringify(req));
       console.log('[Relay] Request sent:', req);
     };
@@ -44,8 +49,7 @@ export default function CurrentOrders() {
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        if (data[0] === 'EVENT' && data[2]?.kind === 23195) {
-          console.log('[Relay] Mostro Order:', data[2]);
+        if (data[0] === 'EVENT' && data[2]?.kind === 38383) {
           setOrders((prev) => [...prev, data[2]]);
         } else {
           console.log('[Relay] Skipped:', data);
@@ -57,6 +61,7 @@ export default function CurrentOrders() {
 
     socket.onerror = (err) => {
       console.error('[Relay] Connection error ❌', err);
+      setRelayStatus('error');
     };
 
     socket.onclose = () => {
@@ -68,41 +73,26 @@ export default function CurrentOrders() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto text-white space-y-4">
-      <h2 className="text-xl font-bold mb-4">Live Mostro Orders</h2>
+      <h2 className="text-xl font-bold mb-4">Live Orders</h2>
 
-      {loading && <Skeleton className="h-24 w-full bg-neutral-800" />}
+      {relayStatus === 'connecting' && (
+        <div className="flex items-center justify-center py-12">
+          <Image src="/loading.gif" alt="Loading..." width={36} height={36} />
+        </div>
+      )}
 
-      {orders.map(order => {
-        let parsed;
-        try {
-          parsed = JSON.parse(order.content);
-        } catch {
-          console.warn('Invalid order content:', order);
-          return null;
-        }
+      {orders.length === 0 && relayStatus === 'connected' && (
+        <p className="text-gray-400">No open orders found from Mostro daemon.</p>
+      )}
 
-        return (
-          <Card key={order.id} className="bg-neutral-900 border border-neutral-700">
-            <CardContent className="p-4 space-y-1">
-              <p><strong>Type:</strong> {parsed.type}</p>
-              <p><strong>Amount:</strong> {parsed.amount}</p>
-              <p><strong>Fiat:</strong> {parsed.fiat_code}</p>
-              <p><strong>Method:</strong> {parsed.payment_method}</p>
-              <p className="mt-2">
-                <a
-                  href={`/order/${order.id}`}
-                  className="text-lime-400 underline text-sm"
-                >
-                  View Order
-                </a>
-              </p>
-            </CardContent>
-            <div className="bg-neutral-900 border border-neutral-700 p-4 rounded text-sm mt-8">
-              <p className="text-lime-400">Relay Status: {relayStatus}</p>
-            </div>
-          </Card>
-        );
-      })}
+      {orders.map((order, index) => (
+        <Card key={`${order.id}-${index}`} className="bg-neutral-900 border border-neutral-700">
+          <CardContent className="p-4 text-sm font-mono text-white">
+            <div className="text-lime-400 font-bold mb-2">Raw JSON Event</div>
+            <pre className="whitespace-pre-wrap break-words">{JSON.stringify(order, null, 2)}</pre>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 }

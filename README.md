@@ -112,12 +112,9 @@ The app will be available at `http://localhost:3000`
 - Message decoding and peer chat  
 - Dispute handling  
 - Persistent event loading  
-
----
-
-### 🚧 En Progreso
-
-- NIP-59 support (payment method metadata)
+- Chat history and messaging  
+- Order history and details and filtering  
+- Order cancellation and dispute resolution
 
 ## Scripts
 
