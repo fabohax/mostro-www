@@ -80,7 +80,7 @@ export default function Home() {
   };
 
   return (
-    <div className="h-full bg-[#101010] text-white p-0 font-mono space-y-6 py-20">
+    <div className="h-full bg-[#151515] text-white p-0 font-mono space-y-6 py-20">
       <Header />
 
       <Card className="bg-neutral-900 border border-neutral-700 max-w-md mx-auto shadow-lg my-8">
